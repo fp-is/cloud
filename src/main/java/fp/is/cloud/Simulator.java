@@ -142,7 +142,6 @@ public class Simulator {
       final Vm vm = new VmSimple(mips, vmPes);
       vm.setRam(ram).setBw(bw).setSize(size);
       vm.setCloudletScheduler(new CloudletSchedulerSpaceShared());
-      vm.set
       list.add(vm);
     }
 
