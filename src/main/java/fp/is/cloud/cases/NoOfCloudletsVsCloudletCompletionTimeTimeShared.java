@@ -7,18 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VmImageSizeVsCost extends BaseCase {
+public class NoOfCloudletsVsCloudletCompletionTimeTimeShared extends BaseCase {
 
-  public VmImageSizeVsCost() throws FileNotFoundException {
+  public NoOfCloudletsVsCloudletCompletionTimeTimeShared() throws FileNotFoundException {
     this.writeFile(this.run());
   }
 
   public Map<Integer, List<Map<String, Double>>> run() {
     Map<Integer, List<Map<String, Double>>> res = new HashMap();
-    for (int i = 256; i <= 2048; i+=256) {
+    for (int i = 68; i <= 178; i += 10) {
       Simulator simulator = new Simulator();
-      simulator.setVmSize(i);
-      simulator.setCloudletCount(1);
+      simulator.setDataCenterHostPes(i);
+      simulator.setVmCount(68);
+      simulator.setCloudletCount(i);
+      simulator.setCloudletScheduler("timeShared");
       res.put(i, simulator.run());
     }
 

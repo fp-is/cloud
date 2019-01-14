@@ -20,7 +20,6 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.ResourceProvisionerSimple;
 import org.cloudbus.cloudsim.resources.Pe;
 import org.cloudbus.cloudsim.resources.PeSimple;
-import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletScheduler;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.schedulers.vm.VmScheduler;
@@ -74,7 +73,8 @@ public class Simulator {
     CloudSim simulation = new CloudSim();
     DatacenterBroker broker0 = new DatacenterBrokerSimple(simulation);
     List<Map<String, Double>> resultList = new ArrayList<>();
-    Datacenter datacenter = createDataCenter(simulation, dataCenterHosts, dataCenterHostPes, dataCenterHostMips,
+    Datacenter datacenter = createDataCenter(simulation, dataCenterHosts, dataCenterHostPes,
+        dataCenterHostMips,
         dataCenterRam, dataCenterBw, dataCenterStorage, vmScheduler);
 
     List<Vm> vmList = createVms(vmCount, vmMips, vmPes, vmRam, vmBw, vmSize, cloudletScheduler);
@@ -83,14 +83,14 @@ public class Simulator {
     broker0.submitCloudletList(cloudletList);
     simulation.start();
     new CloudletsTableBuilder(broker0.getCloudletFinishedList()).build();
-    broker0.getCloudletFinishedList().forEach(cloudlet -> {
+    for (Cloudlet cloudlet : broker0.getCloudletFinishedList()) {
       Map<String, Double> map = new HashMap<>();
       map.put("cloudletId", (double) cloudlet.getId());
       map.put("cost", cloudlet.getTotalCost());
-      map.put("startTime", cloudlet.getExecStartTime());
-      map.put("finishTime", cloudlet.getFinishTime());
+      map.put("startTime", Math.floor(cloudlet.getExecStartTime()));
+      map.put("finishTime", Math.floor(cloudlet.getFinishTime()));
       resultList.add(map);
-    });
+    }
 
     return resultList;
   }
@@ -98,17 +98,17 @@ public class Simulator {
   private Datacenter createDataCenter(CloudSim simulation, int hosts, int hostPes, int hostMips,
       long ram, long bw, long storage, VmScheduler vmScheduler) {
     final List<Host> hostList = new ArrayList<>(hosts);
-    for(int i = 0; i < hosts; i++) {
+    for (int i = 0; i < hosts; i++) {
       Host host = createHost(hostPes, hostMips, ram, bw, storage);
       host.setRamProvisioner(new ResourceProvisionerSimple())
           .setBwProvisioner(new ResourceProvisionerSimple())
-          .setVmScheduler(vmScheduler);
+          .setVmScheduler(new VmSchedulerSpaceShared());
       hostList.add(host);
     }
 
     Datacenter dc = new DatacenterSimple(simulation, hostList, new VmAllocationPolicySimple());
     DatacenterCharacteristics ch = dc.getCharacteristics();
-    ch.setCostPerBw(1).setCostPerMem(1).setCostPerSecond(1).setCostPerSecond(1);
+    ch.setCostPerBw(0.1).setCostPerMem(0.1).setCostPerSecond(0.1).setCostPerStorage(0.1);
     return dc;
   }
 

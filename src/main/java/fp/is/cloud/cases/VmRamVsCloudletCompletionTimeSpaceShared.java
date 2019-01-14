@@ -7,19 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NoOfCloudletsVsCloudletCompletionTime extends BaseCase {
-  public NoOfCloudletsVsCloudletCompletionTime() throws FileNotFoundException {
+public class VmRamVsCloudletCompletionTimeSpaceShared extends BaseCase {
+
+  public VmRamVsCloudletCompletionTimeSpaceShared() throws FileNotFoundException {
     this.writeFile(this.run());
   }
 
   public Map<Integer, List<Map<String, Double>>> run() {
     Map<Integer, List<Map<String, Double>>> res = new HashMap();
-    for (int i = 68; i <= 178; i += 10) {
+    for (int i = 512; i <= 5120; i+=512) {
       Simulator simulator = new Simulator();
-      simulator.setDataCenterHostPes(i);
+      simulator.setVmRam(i);
+      simulator.setCloudletCount(68);
       simulator.setVmCount(68);
-      simulator.setCloudletCount(i);
-      simulator.setCloudletScheduler("timeShared");
+      simulator.setDataCenterHostPes(68);
       res.put(i, simulator.run());
     }
 
