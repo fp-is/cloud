@@ -15,12 +15,12 @@ public class App {
     try {
       new NoOfCloudletsVsCloudletCompletionTimeTimeShared();
       new NoOfCloudletsVsCloudletCompletionTimeSpaceShared();
-//      new CloudletLengthVsTime();
-//      new VmRamVsCloudletCompletionTimeSpaceShared();
-//      new VmRamVsCloudletCompletionTimeTimeShared();
-//      new BandwidthVsCloudletCompletionTimeSpaceShared();
-//      new BandwidthVsCloudletCompletionTimeTimeShared();
-//      new VmProcessingPowerVsProcessTiming();
+      new CloudletLengthVsTime();
+      new VmRamVsCloudletCompletionTimeSpaceShared();
+      new VmRamVsCloudletCompletionTimeTimeShared();
+      new BandwidthVsCloudletCompletionTimeSpaceShared();
+      new BandwidthVsCloudletCompletionTimeTimeShared();
+      new VmProcessingPowerVsProcessTiming();
     } catch (Exception e) {
 
     }
