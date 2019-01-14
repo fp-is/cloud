@@ -9,7 +9,7 @@ import java.util.Map;
 public abstract class BaseCase {
 
   protected void writeFile(Map<Integer, List<Map<String, Double>>> list) throws FileNotFoundException {
-    String fileName = this.getClass().getSimpleName() + ".csv";
+    String fileName = "output/" + this.getClass().getSimpleName() + ".csv";
     try (PrintWriter pw = new PrintWriter(new File(fileName))) {
       StringBuilder sb = new StringBuilder();
       sb.append("x,cloudletId,startTime,finishTime,cost\n");

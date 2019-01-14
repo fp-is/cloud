@@ -20,7 +20,10 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.ResourceProvisionerSimple;
 import org.cloudbus.cloudsim.resources.Pe;
 import org.cloudbus.cloudsim.resources.PeSimple;
+import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletScheduler;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
+import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
+import org.cloudbus.cloudsim.schedulers.vm.VmScheduler;
 import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 import org.cloudbus.cloudsim.vms.Vm;
@@ -44,6 +47,8 @@ public class Simulator {
   private int cloudletCount;
   private long cloudletLength;
   private int cloudletPes;
+  private String cloudletScheduler;
+  private VmScheduler vmScheduler;
 
   public Simulator() {
     this.dataCenterHosts = 2;
@@ -61,27 +66,8 @@ public class Simulator {
     this.cloudletCount = 16;
     this.cloudletLength = 40000;
     this.cloudletPes = 1;
-  }
-
-  public Simulator(int dataCenterHosts, int dataCenterHostPes, int dataCenterHostMips,
-      long dataCenterRam, long dataCenterBw, long dataCenterStorage, int vmCount, int vmMips,
-      int vmPes, long vmRam, long vmBw, long vmSize, int cloudletCount, long cloudletLength,
-      int cloudletPes) {
-    this.dataCenterHosts = dataCenterHosts;
-    this.dataCenterHostPes = dataCenterHostPes;
-    this.dataCenterHostMips = dataCenterHostMips;
-    this.dataCenterRam = dataCenterRam;
-    this.dataCenterBw = dataCenterBw;
-    this.dataCenterStorage = dataCenterStorage;
-    this.vmCount = vmCount;
-    this.vmMips = vmMips;
-    this.vmPes = vmPes;
-    this.vmRam = vmRam;
-    this.vmBw = vmBw;
-    this.vmSize = vmSize;
-    this.cloudletCount = cloudletCount;
-    this.cloudletLength = cloudletLength;
-    this.cloudletPes = cloudletPes;
+    this.cloudletScheduler = "spaceShared";
+    this.vmScheduler = new VmSchedulerSpaceShared();
   }
 
   public List<Map<String, Double>> run() {
@@ -89,9 +75,9 @@ public class Simulator {
     DatacenterBroker broker0 = new DatacenterBrokerSimple(simulation);
     List<Map<String, Double>> resultList = new ArrayList<>();
     Datacenter datacenter = createDataCenter(simulation, dataCenterHosts, dataCenterHostPes, dataCenterHostMips,
-        dataCenterRam, dataCenterBw, dataCenterStorage);
+        dataCenterRam, dataCenterBw, dataCenterStorage, vmScheduler);
 
-    List<Vm> vmList = createVms(vmCount, vmMips, vmPes, vmRam, vmBw, vmSize);
+    List<Vm> vmList = createVms(vmCount, vmMips, vmPes, vmRam, vmBw, vmSize, cloudletScheduler);
     List<Cloudlet> cloudletList = createCloudlets(cloudletCount, cloudletLength, cloudletPes);
     broker0.submitVmList(vmList);
     broker0.submitCloudletList(cloudletList);
@@ -110,13 +96,13 @@ public class Simulator {
   }
 
   private Datacenter createDataCenter(CloudSim simulation, int hosts, int hostPes, int hostMips,
-      long ram, long bw, long storage) {
+      long ram, long bw, long storage, VmScheduler vmScheduler) {
     final List<Host> hostList = new ArrayList<>(hosts);
     for(int i = 0; i < hosts; i++) {
       Host host = createHost(hostPes, hostMips, ram, bw, storage);
       host.setRamProvisioner(new ResourceProvisionerSimple())
           .setBwProvisioner(new ResourceProvisionerSimple())
-          .setVmScheduler(new VmSchedulerSpaceShared());
+          .setVmScheduler(vmScheduler);
       hostList.add(host);
     }
 
@@ -136,12 +122,16 @@ public class Simulator {
     return new HostSimple(ram, bw, storage, peList);
   }
 
-  private List<Vm> createVms(int numberOfVm, int mips, int vmPes, long ram, long bw, long size) {
+  private List<Vm> createVms(int numberOfVm, int mips, int vmPes, long ram, long bw, long size,
+      String cloudletScheduler) {
     final List<Vm> list = new ArrayList<>();
     for (int i = 0; i < numberOfVm; i++) {
       final Vm vm = new VmSimple(mips, vmPes);
       vm.setRam(ram).setBw(bw).setSize(size);
       vm.setCloudletScheduler(new CloudletSchedulerSpaceShared());
+      if (cloudletScheduler.equals("timeShared")) {
+        vm.setCloudletScheduler(new CloudletSchedulerTimeShared());
+      }
       list.add(vm);
     }
 
@@ -280,5 +270,22 @@ public class Simulator {
 
   public void setCloudletPes(int cloudletPes) {
     this.cloudletPes = cloudletPes;
+  }
+
+  public String getCloudletScheduler() {
+    return cloudletScheduler;
+  }
+
+  public void setCloudletScheduler(
+      String cloudletScheduler) {
+    this.cloudletScheduler = cloudletScheduler;
+  }
+
+  public VmScheduler getVmScheduler() {
+    return vmScheduler;
+  }
+
+  public void setVmScheduler(VmScheduler vmScheduler) {
+    this.vmScheduler = vmScheduler;
   }
 }
