@@ -42,6 +42,7 @@ def main():
             plotter(infile, outfile)
         except AttributeError:
             print("No plotter found for %s." % file)
+            raise
 
 
 if __name__ == '__main__':
