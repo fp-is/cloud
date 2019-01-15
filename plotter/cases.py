@@ -35,8 +35,8 @@ def vm_processing_power_vs_process_timing(input, output):
     data = pd.read_csv(input).sort_values('x')
     plt.plot(data['x'], data['finishTime'], c='indianred')
     plt.plot(data['x'], data['finishTime'], 'o', c='indianred')
-    plt.xlabel('Cloudlet length', weight='bold')
-    plt.ylabel('Time', weight='bold')
+    plt.xlabel('VM Processing Power', weight='bold')
+    plt.ylabel('Process Timing', weight='bold')
     plt.axis([250, 2500, 0, 180])
     plt.savefig('output/VmProcessingPowerVsProcessTiming.png')
     plt.clf()
@@ -241,7 +241,7 @@ def vm_ram_vs_cloudlet_completion_time_space_shared(input, output):
         plt.bar(sets[i][0], sets[i][1], bottom=bawah[i]
                 [1], width=width, label=times[i])
 
-    plt.xlabel('Bandwidth', weight='bold')
+    plt.xlabel('VM Ram', weight='bold')
     plt.ylabel('Completion Percentage(%)', weight='bold')
     plt.xticks(x, x)
     plt.legend()
@@ -280,7 +280,7 @@ def vm_ram_vs_cloudlet_completion_time_time_shared(input, output):
         plt.bar(sets[i][0], sets[i][1], bottom=bawah[i]
                 [1], width=width, label=times[i])
 
-    plt.xlabel('Bandwidth', weight='bold')
+    plt.xlabel('VM Ram', weight='bold')
     plt.ylabel('Completion Percentage(%)', weight='bold')
     plt.xticks(x, x)
     plt.legend()
