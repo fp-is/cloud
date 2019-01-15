@@ -26,7 +26,7 @@ def cloudlet_length_vs_time(input, output):
     plt.plot(data['x'], data['cost'], 'o', c='indianred')
     plt.xlabel('Cloudlet length', weight='bold')
     plt.ylabel('Cost', weight='bold')
-    plt.axis([40000, 160000, 500, 1420])
+    plt.axis([40000, 160000, 50, 150])
     plt.savefig('output/CloudletLengthVsCost.png')
     plt.clf()
 
